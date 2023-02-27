@@ -1,0 +1,109 @@
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.main h2, .main h3 {
+    margin: 0;
+    padding: 0;
+}
+
+.main h2 {
+    font-size: 3.5rem;
+}
+
+.main h3 {
+    font-size: 2rem;
+}
+
+.nav {
+    margin-top: 3rem;
+    font-size: 1.4em;
+    color: #2b2b2b;
+    background-color: #ededed;
+    padding: 30px;
+    border-radius: 20px;
+}
+
+.nav p {
+    margin-top: 1rem;
+    font-weight: 700;
+}
+
+.nav a:hover {
+    color: #2b2b2b;
+    text-decoration: underline;
+}
+
+.nav h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding-bottom: 3px;
+    border-bottom: #2b2b2b 3px solid;
+}
+
+.sessionDisplay {
+    margin-top: 2.5rem;
+    max-width: 80vw;
+}
+
+.sessionDisplay pre {
+    max-width: 100%;
+    max-height: 50vh;
+    overflow: auto;
+}
+
+.footer {
+    display: flex;
+    flex: 1;
+    padding: 2rem 0;
+    border-top: 1px solid #eaeaea;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.title,
+.description {
+    text-align: center;
+}
+
+.description {
+    margin: 4rem 0;
+    line-height: 1.5;
+    font-size: 1.5rem;
+}
+
+.code {
+    background: #fafafa;
+    border-radius: 5px;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+    Bitstream Vera Sans Mono, Courier New, monospace;
+}
+
+
+@media (prefers-color-scheme: dark) {
+    .card,
+    .footer {
+        border-color: #222;
+    }
+
+    .code {
+        background: #111;
+    }
+
+    .logo img {
+        filter: invert(1);
+    }
+}

@@ -1,0 +1,46 @@
+.mainNavigation {
+    background: var(--ory-theme-background-surface);
+    color: var(--ory-theme-foreground-def);
+    min-width: 100vw;
+    padding: 2rem 0;
+}
+
+.mainNavigation > h1 {
+    margin: 0 0 1rem;
+}
+
+.mainNavigation > ul {
+    align-content: space-evenly;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.mainContainer {
+    align-content: space-evenly;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.mainContainer > * {
+    margin-bottom: 2rem;
+}
+
+.mainContainer > *:last-child {
+    margin: 0;
+}
+
+.content {
+    align-content: space-evenly;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    padding: 0 2rem;
+}

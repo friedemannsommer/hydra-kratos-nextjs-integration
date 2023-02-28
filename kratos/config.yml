@@ -71,7 +71,7 @@ selfservice:
             - hook: session
 
 oauth2_provider:
-  url: http://hydra:5445
+  url: http://hydra:4445
 
 log:
   level: debug

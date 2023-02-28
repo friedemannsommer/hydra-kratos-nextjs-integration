@@ -2,38 +2,34 @@ import { RegistrationFlow, UpdateRegistrationFlowBody } from '@ory/client'
 import { UserAuthCard } from '@ory/elements'
 import { AxiosError } from 'axios'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useState } from 'react'
 
 import Layout from '../components/layout'
-import { HandleError } from '../lib/hooks'
+import { HandleError, KratosErrorResponse } from '../lib/hooks'
 import { kratos } from '../lib/kratos'
 
 // original source: https://github.com/ory/elements/blob/a340041ccdefecd24e860ecdfb47546862b15fc7/examples/nextjs-spa/src/pages/registration.tsx#L22-L149
-export default function Registration() {
+export default function Registration(): ReactElement {
     const [flow, setFlow] = useState<RegistrationFlow>()
-
     const handleError = HandleError()
-
-    // Get flow information from the URL
     const router = useRouter()
 
-    const flowId = String(router.query.flow || '')
-    const returnTo = String(router.query.return_to || '')
+    const flowId = router.query.flow ? String(router.query.flow) : undefined
+    const returnTo = router.query.return_to ? String(router.query.return_to) : undefined
 
     const getRegistrationFlow = useCallback(
         (id: string) =>
             kratos
                 .getRegistrationFlow({ id })
                 .then(({ data }) => {
-                    // We received the flow - let's use its data and render the form!
                     setFlow(data)
                 })
-                .catch((error: AxiosError) => handleError(error)),
+                .catch((error: AxiosError<KratosErrorResponse>) => handleError(error)),
         [handleError]
     )
 
     const createRegistrationFlow = useCallback(
-        (returnTo: string) =>
+        (returnTo?: string) =>
             kratos
                 .createBrowserRegistrationFlow({
                     returnTo
@@ -41,12 +37,12 @@ export default function Registration() {
                 .then(({ data }) => {
                     setFlow(data)
                     router
-                        .push(`/registration?flow=${data.id}`, undefined, {
+                        .push(`?flow=${data.id}`, undefined, {
                             shallow: true
                         })
                         .catch(console.error)
                 })
-                .catch((error: AxiosError) => handleError(error)),
+                .catch((error: AxiosError<KratosErrorResponse>) => handleError(error)),
         [handleError, router]
     )
 
@@ -55,75 +51,72 @@ export default function Registration() {
             return
         }
 
-        // If ?flow=.. was in the URL, we fetch it
         if (flowId) {
-            getRegistrationFlow(String(flowId || '')).catch(
-                (error: AxiosError) => error.response?.status === 410 ?? createRegistrationFlow(returnTo)
-                // if the flow is expired, we create a new one
-            )
+            if (!flow || flow.id !== flowId) {
+                getRegistrationFlow(flowId).catch(
+                    (error: AxiosError) => error.response?.status === 410 ?? createRegistrationFlow(returnTo)
+                )
+            }
             return
         }
 
-        // Otherwise we initialize it
         createRegistrationFlow(returnTo).catch(console.error)
-    }, [createRegistrationFlow, getRegistrationFlow, router.isReady, flowId, returnTo])
+    }, [createRegistrationFlow, getRegistrationFlow, router.isReady, flowId, returnTo, flow])
 
-    const submitFlow = (values: UpdateRegistrationFlowBody) =>
-        kratos
-            .updateRegistrationFlow({
-                flow: String(flow?.id),
-                updateRegistrationFlowBody: values
-            })
-            // We logged in successfully! Let's bring the user home.
-            .then(() => {
-                if (flow?.return_to) {
-                    window.location.href = flow?.return_to
-                    return
-                }
-                router.push('/').catch(console.error)
-            })
-            .catch((error: AxiosError) => handleError(error))
-            // If the previous handler did not catch the error it's most likely a form validation error
-            .catch((error: AxiosError) => {
-                switch (error.response?.status) {
-                    case 400:
-                        // Yup, it is!
-                        setFlow(error.response?.data)
-                        break
-                    case 422:
-                        // get new flow data based on the flow id in the redirect url
-                        const flow = new URLSearchParams(error.response.data.redirect_browser_to).get('flow') || ''
-                        // add the new flow id to the URL
-                        router
-                            .push(`/registration${flow ? `?flow=${flow}` : ''}`, undefined, {
-                                shallow: true
-                            })
-                            .catch(console.error)
-                        break
-                    default:
-                        return Promise.reject(error)
-                }
-            })
+    const submitFlow = useCallback(
+        (values: UpdateRegistrationFlowBody) => {
+            kratos
+                .updateRegistrationFlow({
+                    flow: String(flow?.id),
+                    updateRegistrationFlowBody: values
+                })
+                .then(() => {
+                    if (flow?.return_to) {
+                        window.location.href = flow?.return_to
+                        return
+                    }
+                    router.push('/').catch(console.error)
+                })
+                .catch((error: AxiosError<KratosErrorResponse>) => handleError(error))
+                .catch((error: AxiosError) => {
+                    switch (error.response?.status) {
+                        case 400:
+                            setFlow(error.response?.data as RegistrationFlow)
+                            break
+                        case 422: {
+                            const flow = new URL(
+                                (error.response.data as Record<string, string>).redirect_browser_to,
+                                window.location.origin
+                            ).searchParams.get('flow')
+
+                            router
+                                .push(`/registration${flow ? `?flow=${flow}` : ''}`, undefined, {
+                                    shallow: true
+                                })
+                                .catch(console.error)
+                            break
+                        }
+                        default:
+                            return Promise.reject(error)
+                    }
+                })
+        },
+        [flow, handleError, router]
+    )
 
     return (
         <Layout>
             {flow ? (
-                // create a registration form that dynamically renders based on the flow data using Ory Elements
                 <UserAuthCard
                     cardImage="/ory.svg"
                     title="Registration"
-                    // This defines what kind of card we want to render.
                     flowType="registration"
-                    // we always need to pass the flow to the card since it contains the form fields, error messages and csrf token
                     flow={flow}
-                    // the registration card needs a way to navigate to the login page
                     additionalProps={{
                         loginURL: '/login'
                     }}
-                    // include the necessary scripts for webauthn to work
                     includeScripts={true}
-                    // submit the registration form data to Ory
-                    onSubmit={({ body }) => submitFlow(body as UpdateRegistrationFlowBody)}
+                    onSubmit={({ body }): void => submitFlow(body as UpdateRegistrationFlowBody)}
                 />
             ) : (
                 <div>Loading...</div>

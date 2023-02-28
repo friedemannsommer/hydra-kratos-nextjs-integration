@@ -1,11 +1,11 @@
 import { ThemeProvider } from '@ory/elements'
 import Link from 'next/link'
-import React, { PropsWithChildren } from 'react'
+import React, { PropsWithChildren, ReactElement } from 'react'
 
 import styles from '../styles/layout.module.css'
 
 // original source: https://github.com/ory/elements/blob/a340041ccdefecd24e860ecdfb47546862b15fc7/examples/nextjs-spa/src/components/layout.tsx#L8-L62
-export default function Layout({ children }: PropsWithChildren) {
+export default function Layout({ children }: PropsWithChildren): ReactElement {
     return (
         <ThemeProvider theme="dark">
             <div className={styles.mainContainer}>

@@ -1,30 +1,32 @@
 import { Session } from '@ory/client'
 import { AxiosError } from 'axios'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 
 import styles from '../styles/home.module.css'
 
 import Layout from '../components/layout'
-import { HandleError } from '../lib/hooks'
+import { HandleError, KratosErrorResponse } from '../lib/hooks'
 import { kratos } from '../lib/kratos'
 
-export default function Home() {
+export default function Home(): ReactElement {
     const router = useRouter()
     const [session, setSession] = useState<Session>()
     const handleError = HandleError()
 
     useEffect(() => {
-        kratos
-            .toSession()
-            .then(({ data }) => {
-                setSession(data)
-            })
-            .catch((err: AxiosError) => handleError(err))
-            .catch(() => {
-                router.push('/login').catch(console.error)
-            })
-    }, [handleError, router])
+        if (!session) {
+            kratos
+                .toSession()
+                .then(({ data }) => {
+                    setSession(data)
+                })
+                .catch((err: AxiosError<KratosErrorResponse>) => handleError(err))
+                .catch(() => {
+                    router.push('/login').catch(console.error)
+                })
+        }
+    }, [handleError, router, session])
 
     return (
         <Layout>

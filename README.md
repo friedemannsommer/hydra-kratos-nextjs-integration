@@ -21,6 +21,6 @@ between [Hydra](https://www.ory.sh/hydra/) and [Kratos](https://www.ory.sh/krato
 1. `$ node scripts/start-oauth2-client.cjs`
 2. Open [127.0.0.1:5446](http://127.0.0.1:5446) in the browser of your choice
 3. Follow the directions on the website (click "Authorize application")
-4. Note that a "Login challenge" will be shown, but the OAuth2 login request data aren't available
+4. Note that a "Login challenge" will be shown, but the OAuth2 login request data isn't available
 5. Sign in with the previously created Kratos identity credentials
 6. After a successful sign in you aren't redirect back to Hydra

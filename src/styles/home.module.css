@@ -47,13 +47,6 @@
 
 .sessionDisplay {
     margin-top: 2.5rem;
-    max-width: 80vw;
-}
-
-.sessionDisplay pre {
-    max-width: 100%;
-    max-height: 50vh;
-    overflow: auto;
 }
 
 .footer {
@@ -83,24 +76,10 @@
     font-size: 1.5rem;
 }
 
-.code {
-    background: #fafafa;
-    border-radius: 5px;
-    padding: 0.75rem;
-    font-size: 1.1rem;
-    font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-    Bitstream Vera Sans Mono, Courier New, monospace;
-}
-
-
 @media (prefers-color-scheme: dark) {
     .card,
     .footer {
         border-color: #222;
-    }
-
-    .code {
-        background: #111;
     }
 
     .logo img {

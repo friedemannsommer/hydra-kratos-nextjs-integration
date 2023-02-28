@@ -1,7 +1,7 @@
 .mainNavigation {
     background: var(--ory-theme-background-surface);
     color: var(--ory-theme-foreground-def);
-    min-width: 100vw;
+    min-width: 100%;
     padding: 2rem 0;
 }
 
@@ -43,4 +43,9 @@
     flex-wrap: wrap;
     justify-content: space-evenly;
     padding: 0 2rem;
+}
+
+.content > * {
+    align-self: center;
+    flex: 0 1 auto;
 }

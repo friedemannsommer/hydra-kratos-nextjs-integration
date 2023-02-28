@@ -33,8 +33,8 @@ services:
   mailslurper:
     image: oryd/mailslurper:latest-smtps
     ports:
-      - '4436:4436'
-      - '4437:4437'
+      - '4436:4436' # website
+      - '4437:4437' # API
     networks:
       - intranet
 
@@ -44,7 +44,7 @@ services:
       - hydra
       - mailslurper
     ports:
-      - "3100:3000"
+      - "3100:3000" # website
     environment:
       - HYDRA_ADMIN_URL=http://hydra:5445
     networks:

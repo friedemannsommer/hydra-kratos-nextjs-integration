@@ -8,9 +8,7 @@ between [Hydra](https://www.ory.sh/hydra/) and [Kratos](https://www.ory.sh/krato
 * node >= v14
 * npm
 
-## Getting Started
-
-### Setup
+## Setup
 
 1. `$ npm ci`
 2. `$ docker-compose up`
